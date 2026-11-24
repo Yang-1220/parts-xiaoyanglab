@@ -638,7 +638,7 @@ function showQ(){
   if(T.curFirst){T.shown.add(idx);T.firstTotal++;}
   $id('tprog').textContent=(T.i+1)+' / '+T.q.length;
   var opts=optionsFor(c,idx);
-  var html='<div class="tcard">'+((mode==='photo'&&ph)?'<img src="'+ph+'" alt="">':c.svg)+'</div><div class="topts">';
+  var html='<div class="tcard">'+(ph?'<img src="'+ph+'" alt="">':c.svg)+'</div><div class="topts">';
   opts.forEach(function(n){html+='<button class="topt" data-n="'+n.replace(/"/g,'&quot;')+'">'+n+'</button>';});
   html+='</div>';
   $id('tbody').innerHTML=html;
