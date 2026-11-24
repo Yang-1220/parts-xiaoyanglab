@@ -51,6 +51,7 @@ footer{margin-top:22px;color:var(--mut);font-size:12px;text-align:center}
  padding:12px 12px calc(14px + env(safe-area-inset-bottom))}
 .thead{display:flex;align-items:center;gap:10px;font-size:13px;color:#6b7280;flex:0 0 auto}
 .thead button{padding:5px 10px;font-size:12px}
+.thead button.on{background:#15181d;color:#fff;border-color:#15181d}
 .thead .grow{flex:1}
 #ttime{font-weight:600;color:#15181d;font-variant-numeric:tabular-nums;min-width:52px;text-align:right}
 .tbar{height:4px;background:#e4e6ea;border-radius:2px;margin:10px 0 6px;overflow:hidden;flex:0 0 auto}
@@ -104,7 +105,7 @@ footer{margin-top:22px;color:var(--mut);font-size:12px;text-align:center}
 <footer>华为“算存砥芯”基本技能赛 · 自测用</footer>
 
 <div id="test" class="test">
-  <div class="thead"><button id="tclose">关闭</button><span id="tmsg"></span>
+  <div class="thead"><button id="tclose">关闭</button><button id="theld">答错：自动</button><span id="tmsg"></span>
     <span class="grow"></span><span id="tprog">1 / 1</span><span id="ttime">15.0s</span></div>
   <div class="tbar"><i id="tbarfill"></i></div>
   <div class="tbody" id="tbody"></div>
@@ -609,6 +610,7 @@ render();
 /* ---------- 压力测试（四选一） ---------- */
 var T={on:false,q:[],i:0,right:0,miss:0,shown:new Set(),curFirst:false,firstTotal:0,firstRight:0,
        missed:new Set(),limit:15000,tmr:null,start:0,t0:0,locked:false};
+var hold=(LS.getItem('quiz-hold')==='1');
 function $id(x){return document.getElementById(x);}
 function shuffleArr(a){for(var i=a.length-1;i>0;i--){var j=Math.random()*(i+1)|0;var t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function fmtTime(s){var m=Math.floor(s/60),r=s%60;return m+':'+(r<10?'0':'')+r;}
@@ -678,7 +680,8 @@ function answer(choice,btn){
     T.q.push(idx);
     $id('ttime').textContent=choice?'错':'超时';
     $id('tbody').insertAdjacentHTML('beforeend','<div class="tans2"><b>'+c.name+'</b> · '+c.hint+'<br>'+c.tips[0].replace(/<[^>]+>/g,'')+'</div>');
-    setTimeout(nextQ,1600);
+    if(hold){$id('tfoot').innerHTML='<button class="tyes" id="tnext">下一题</button>';}
+    else setTimeout(nextQ,1600);
   }
 }
 function nextQ(){
@@ -704,10 +707,14 @@ $id('tfoot').addEventListener('click',function(e){
   var b=e.target.closest('button');if(!b)return;
   if(b.id==='tretry')startTest(true);
   else if(b.id==='tagain')startTest(false);
+  else if(b.id==='tnext')nextQ();
   else if(b.id==='tclose2')endTest();
 });
 $id('tclose').onclick=endTest;
 $id('testbtn').onclick=function(){startTest(filter==='错题');};
+function paintHold(){var b=$id('theld');b.textContent=hold?'答错：停住':'答错：自动';b.classList.toggle('on',hold);}
+$id('theld').onclick=function(){hold=!hold;LS.setItem('quiz-hold',hold?'1':'0');paintHold();};
+paintHold();
 updateWrongBadge();
 
 
