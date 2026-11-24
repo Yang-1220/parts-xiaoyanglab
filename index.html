@@ -596,7 +596,7 @@ chips.addEventListener('click',e=>{
 document.getElementById('shuffle').onclick=()=>{
   order=order.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(v=>v[1]); render();
 };
-document.getElementById('reset').onclick=()=>{ seen.clear(); save(); render(); };
+document.getElementById('reset').onclick=()=>{ if(confirm('清空已翻记录和错题池？')){ seen.clear(); save(); wrong.clear(); saveWrong(); render(); } };
 var mode=LS.getItem('img-mode')||'svg';
 function paintMode(){document.getElementById('mode').textContent=mode==='photo'?'切到示意图':'切到实拍';}
 document.getElementById('mode').onclick=()=>{
